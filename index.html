@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>For You My valentine🌸</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Great+Vibes&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --rose:#e8829a;--deep:#c2556a;--blush:#f7c5d0;--cream:#fdf6f0;
+  --gold:#f7c844;--sage:#7ab87a;--lavender:#d4a8e0;--sky:#a8d4f7;
+}
+html,body{width:100%;height:100%;overflow:hidden;background:#05020a;
+  font-family:'Cormorant Garamond',serif;}
+
+.page{position:fixed;inset:0;display:flex;align-items:center;
+  justify-content:center;flex-direction:column;
+  transition:opacity 1s ease,transform 1s ease;}
+.page.hidden{opacity:0;pointer-events:none;transform:scale(0.96);}
+
+#page-gate{
+  background:radial-gradient(ellipse at 55% 45%,#2a0a18 0%,#110515 55%,#050208 100%);
+}
+.petal-drift{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:0;}
+.petal-drift span{
+  position:absolute;border-radius:50% 0 50% 0;opacity:0;
+  animation:driftUp linear infinite;
+}
+@keyframes driftUp{
+  0%{transform:translateY(105vh) rotate(0deg);opacity:0;}
+  8%{opacity:.5;}90%{opacity:.3;}
+  100%{transform:translateY(-8vh) rotate(400deg);opacity:0;}
+}
+.gate-card{
+  position:relative;z-index:1;
+  background:rgba(30,8,22,0.75);
+  backdrop-filter:blur(24px);
+  border:1px solid rgba(232,130,154,.22);
+  border-radius:32px;
+  padding:3.5rem 3rem;max-width:460px;width:92%;
+  text-align:center;
+  box-shadow:0 0 80px rgba(194,85,106,.18),0 2px 40px rgba(0,0,0,.5),
+             inset 0 1px 0 rgba(255,255,255,.07);
+}
+.gate-icon{font-size:2.6rem;margin-bottom:.4rem;
+  animation:iconFloat 3s ease-in-out infinite;}
+@keyframes iconFloat{0%,100%{transform:translateY(0);}50%{transform:translateY(-7px);}}
+.gate-title{
+  font-family:'Great Vibes',cursive;font-size:3rem;
+  background:linear-gradient(135deg,#fde8f4,#e8829a,#c2556a);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text;line-height:1.1;margin-bottom:.3rem;
+  filter:drop-shadow(0 0 20px rgba(232,130,154,.4));
+}
+.gate-sub{font-size:.95rem;font-style:italic;color:rgba(247,197,208,.5);
+  margin-bottom:2rem;letter-spacing:.04em;}
+.gate-label{font-size:.75rem;letter-spacing:.14em;text-transform:uppercase;
+  color:rgba(232,130,154,.7);margin-bottom:.55rem;display:block;text-align:left;}
+.gate-input{
+  width:100%;padding:.9rem 1.3rem;
+  font-family:'Cormorant Garamond',serif;font-size:1.05rem;
+  color:#f7c5d0;
+  background:rgba(255,255,255,.06);
+  border:1.5px solid rgba(232,130,154,.28);
+  border-radius:16px;outline:none;
+  transition:border-color .3s,box-shadow .3s;
+  margin-bottom:1.3rem;
+}
+.gate-input::placeholder{color:rgba(247,197,208,.3);}
+.gate-input:focus{border-color:var(--rose);
+  box-shadow:0 0 0 4px rgba(232,130,154,.12),0 0 30px rgba(232,130,154,.15);}
+.gate-input.wrong{border-color:#e05555;animation:shake .4s ease;}
+@keyframes shake{0%,100%{transform:translateX(0);}25%{transform:translateX(-7px);}75%{transform:translateX(7px);}}
+.gate-btn{
+  padding:.9rem 2.8rem;
+  font-family:'Great Vibes',cursive;font-size:1.7rem;
+  color:#fff;border:none;border-radius:50px;cursor:pointer;
+  background:linear-gradient(135deg,#e8829a,#c2556a,#a03050);
+  box-shadow:0 4px 24px rgba(194,85,106,.45),0 0 40px rgba(194,85,106,.2);
+  transition:transform .2s,box-shadow .2s;letter-spacing:.04em;
+}
+.gate-btn:hover{transform:translateY(-3px) scale(1.04);
+  box-shadow:0 8px 36px rgba(194,85,106,.55),0 0 60px rgba(194,85,106,.3);}
+.gate-hint{margin-top:1rem;font-size:.78rem;color:rgba(200,100,120,.7);
+  font-style:italic;opacity:0;transition:opacity .4s;}
+.gate-hint.show{opacity:1;}
+
+#page-flower{background:#03010a;overflow:hidden;}
+#bgCanvas{position:fixed;inset:0;z-index:0;}
+#mainCanvas{position:fixed;inset:0;z-index:2;}
+
+.overlay-msg{
+  position:fixed;top:4vh;left:0;right:0;z-index:20;
+  text-align:center;padding:1.2rem 2rem 1.4rem;
+  background:rgba(5,2,12,0.45);
+  backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
+  border-bottom:1px solid rgba(232,130,154,.15);
+  opacity:0;transform:translateY(-24px);
+  transition:opacity 1.2s ease,transform 1.2s ease;
+}
+.overlay-msg.show{opacity:1;transform:translateY(0);}
+.big-title{
+  font-family:'Great Vibes',cursive;
+  font-size:clamp(2.6rem,7vw,4.5rem);
+  background:linear-gradient(135deg,#fde8f4 0%,#f7c5d0 40%,#e8829a 70%,#c2556a 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  filter:drop-shadow(0 0 30px rgba(247,197,208,.55));
+  line-height:1.1;
+}
+.question-text{
+  font-size:clamp(1rem,2.6vw,1.35rem);
+  color:rgba(255,255,255,.7);font-style:italic;
+  margin-top:.5rem;letter-spacing:.04em;
+}
+.answer-row{display:flex;gap:1.2rem;justify-content:center;margin-top:1.2rem;
+  opacity:0;transform:translateY(-14px);position:relative;z-index:20;
+  transition:opacity .9s ease .6s,transform .9s ease .6s;}
+.answer-row.show{opacity:1;transform:translateY(0);}
+.ans-btn{padding:.7rem 2.2rem;font-family:'Cormorant Garamond',serif;
+  font-size:1.05rem;border-radius:50px;cursor:pointer;
+  transition:transform .2s,box-shadow .2s;border:none;}
+.ans-yes{background:linear-gradient(135deg,#f7c5d0,#e8829a);color:#4a1030;
+  box-shadow:0 4px 20px rgba(232,130,154,.45);}
+.ans-no{background:transparent;color:rgba(255,255,255,.4);
+  border:1px solid rgba(255,255,255,.2);}
+.ans-btn:hover{transform:translateY(-2px) scale(1.06);}
+
+.cp{position:fixed;border-radius:2px;pointer-events:none;z-index:200;
+  animation:cfFall 2.5s ease forwards;}
+@keyframes cfFall{0%{opacity:1;}100%{transform:var(--tx) rotate(720deg);opacity:0;}}
+.hp{position:fixed;pointer-events:none;z-index:199;font-size:1.8rem;
+  animation:hFloat 2.8s ease forwards;}
+@keyframes hFloat{
+  0%{transform:translateY(0) scale(.5);opacity:1;}
+  50%{transform:translateY(-90px) scale(1.4);opacity:1;}
+  100%{transform:translateY(-200px) scale(.6);opacity:0;}
+}
+/* ── BEAUTIFUL MODAL ── */
+.modal-backdrop{
+  position:fixed;inset:0;z-index:300;
+  background:rgba(3,1,10,.7);
+  backdrop-filter:blur(8px);
+  display:flex;align-items:center;justify-content:center;
+  opacity:0;pointer-events:none;
+  transition:opacity .5s ease;
+}
+.modal-backdrop.show{opacity:1;pointer-events:all;}
+.modal-box{
+  position:relative;
+  background:rgba(22,6,28,.92);
+  border:1px solid rgba(232,130,154,.3);
+  border-radius:28px;
+  padding:3rem 2.8rem 2.4rem;
+  max-width:480px;width:92%;
+  text-align:center;
+  box-shadow:0 0 80px rgba(194,85,106,.25),inset 0 1px 0 rgba(255,255,255,.08);
+  transform:scale(.88) translateY(20px);
+  transition:transform .5s cubic-bezier(.34,1.56,.64,1);
+}
+.modal-backdrop.show .modal-box{transform:scale(1) translateY(0);}
+.modal-icon{font-size:2.8rem;margin-bottom:.8rem;animation:iconFloat 3s ease-in-out infinite;}
+.modal-title{
+  font-family:'Great Vibes',cursive;font-size:2.2rem;
+  background:linear-gradient(135deg,#fde8f4,#e8829a,#c2556a);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text;margin-bottom:1.2rem;
+  filter:drop-shadow(0 0 16px rgba(232,130,154,.35));
+}
+.modal-question{
+  font-size:1.08rem;line-height:1.75;
+  color:rgba(255,220,235,.85);
+  font-style:italic;letter-spacing:.025em;
+  margin-bottom:2rem;
+}
+.modal-close{
+  padding:.75rem 2.4rem;
+  font-family:'Great Vibes',cursive;font-size:1.5rem;
+  color:#fff;border:none;border-radius:50px;cursor:pointer;
+  background:linear-gradient(135deg,#e8829a,#c2556a);
+  box-shadow:0 4px 20px rgba(194,85,106,.4);
+  transition:transform .2s,box-shadow .2s;
+}
+.modal-close:hover{transform:translateY(-2px) scale(1.05);box-shadow:0 8px 30px rgba(194,85,106,.55);}
+</style>
+</head>
+<body>
+
+<div id="page-gate" class="page">
+  <div class="petal-drift" id="petalBg"></div>
+  <div class="gate-card">
+    <div class="gate-icon">🌸</div>
+    <h1 class="gate-title">Рамина тебя кое что ждеть</h1>
+    <p class="gate-sub">но сперва тебе нужно прошептать волшебное слово</p>
+    <label class="gate-label" for="passInput">введи это слово</label>
+    <input id="passInput" class="gate-input" type="text"
+           placeholder="Yes, I want to see it…" autocomplete="off"/>
+    <button class="gate-btn" onclick="checkPass()">Открыть ✦</button>
+    <p class="gate-hint" id="gateHint">я же дал тебе секретное слово 🥹</p>
+  </div>
+</div>
+
+<div id="page-flower" class="page hidden">
+  <canvas id="bgCanvas"></canvas>
+  <canvas id="mainCanvas"></canvas>
+  <div class="overlay-msg" id="overlayMsg">
+    <p class="big-title">For You 🌸</p>
+    <p class="question-text" id="questionText">Тебе понравился мой небольшой подарочек?</p>
+  </div>
+  <div class="answer-row" id="answerRow">
+    <button class="ans-btn ans-yes" onclick="handleYes()">Да! 💖</button>
+    <button class="ans-btn ans-yes" onclick="handleYes()">Да, конечно! ❤️‍🔥</button>
+  </div>
+</div>
+
+<script>
+/* GATE */
+const SECRET="I want it";
+document.getElementById('passInput').addEventListener('keydown',e=>{if(e.key==='Enter')checkPass();});
+function checkPass(){
+  const v=document.getElementById('passInput').value.trim().toLowerCase();
+  const inp=document.getElementById('passInput');
+  if(v===SECRET){
+    document.getElementById('page-gate').classList.add('hidden');
+    document.getElementById('page-flower').classList.remove('hidden');
+    setTimeout(launchEpic,80);
+  }else{
+    inp.classList.add('wrong');
+    document.getElementById('gateHint').classList.add('show');
+    setTimeout(()=>inp.classList.remove('wrong'),500);
+  }
+}
+
+/* petals on gate */
+(()=>{
+  const colors=['#f7c5d0','#e8829a','#c2556a','#f5d0e8','#d4a8c0','#e8d4f8'];
+  const bg=document.getElementById('petalBg');
+  for(let i=0;i<28;i++){
+    const s=document.createElement('span');
+    const sz=8+Math.random()*16;
+    s.style.cssText=`left:${Math.random()*100}%;width:${sz}px;height:${sz*1.6}px;
+      background:${colors[i%colors.length]};
+      animation-duration:${7+Math.random()*11}s;
+      animation-delay:${Math.random()*14}s;
+      transform:rotate(${Math.random()*360}deg);`;
+    bg.appendChild(s);
+  }
+})();
+
+/* ═══ EPIC GARDEN ═══ */
+function launchEpic(){
+  const W=window.innerWidth, H=window.innerHeight;
+  const dpr=Math.min(window.devicePixelRatio||1,2);
+
+  const bgC=document.getElementById('bgCanvas');
+  bgC.width=W*dpr;bgC.height=H*dpr;
+  bgC.style.width=W+'px';bgC.style.height=H+'px';
+  const bgX=bgC.getContext('2d');bgX.scale(dpr,dpr);
+
+  const mc=document.getElementById('mainCanvas');
+  mc.width=W*dpr;mc.height=H*dpr;
+  mc.style.width=W+'px';mc.style.height=H+'px';
+  const ctx=mc.getContext('2d');ctx.scale(dpr,dpr);
+
+  /* stars */
+  const stars=Array.from({length:200},()=>({
+    x:Math.random()*W,y:Math.random()*H*.7,
+    r:.4+Math.random()*1.8,
+    phase:Math.random()*Math.PI*2,
+    spd:1+Math.random()*2.5
+  }));
+
+  /* palettes */
+  const PALS=[
+    ['#fde0ec','#f7a0bc','#e06088','#c02060'], // deep rose
+    ['#fde8f0','#f8b8d0','#e8829a','#c2556a'], // blush
+    ['#fff0cc','#ffe080','#f7c050','#d49010'], // gold
+    ['#f0e0ff','#d4a8f0','#b060e0','#8030b0'], // violet
+    ['#e0f0ff','#90c8f8','#4090e0','#1060b0'], // sapphire
+    ['#e0fff0','#80e0b0','#30b870','#107840'], // jade
+    ['#ffe8e0','#f8b090','#f07050','#c03020'], // coral
+    ['#f8e0ff','#e898e8','#c050c0','#801880'], // orchid
+    ['#fff8e0','#f0e090','#c8b040','#907010'], // amber
+    ['#e8fff8','#80e8d0','#20c0a0','#008070'], // teal
+  ];
+
+  /* flower positions */
+  function fl(x,y,sc,st,pi,pn){return{x,y,scale:sc,startT:st,pal:PALS[pi%PALS.length],petalN:pn||8};}
+  const flowers=[
+    // back row, small
+    fl(W*.05,H*.78,.5,0,0,6),fl(W*.14,H*.75,.55,0.3,2,7),fl(W*.24,H*.77,.52,0.6,4,6),
+    fl(W*.36,H*.74,.58,0.9,6,8),fl(W*.5,H*.76,.54,0.4,8,7),fl(W*.64,H*.74,.56,0.7,1,7),
+    fl(W*.76,H*.77,.52,1.0,3,6),fl(W*.86,H*.75,.55,0.5,5,8),fl(W*.95,H*.78,.5,0.8,7,6),
+    // mid row
+    fl(W*.02,H*.86,.62,1.2,1,8),fl(W*.11,H*.83,.65,1.5,3,9),fl(W*.21,H*.85,.6,1.8,5,8),
+    fl(W*.32,H*.82,.67,2.1,7,9),fl(W*.43,H*.84,.63,1.4,9,8),fl(W*.55,H*.83,.65,1.7,0,9),
+    fl(W*.66,H*.82,.62,2.0,2,8),fl(W*.77,H*.85,.64,2.3,4,9),fl(W*.88,H*.83,.62,1.6,6,8),
+    fl(W*.97,H*.86,.6,1.9,8,7),
+    // front row
+    fl(W*.07,H*.92,.48,2.5,2,6),fl(W*.18,H*.9,.52,2.8,4,7),fl(W*.3,H*.93,.5,3.1,6,6),
+    fl(W*.42,H*.91,.54,2.6,8,7),fl(W*.57,H*.92,.51,2.9,1,6),fl(W*.69,H*.9,.53,3.2,3,7),
+    fl(W*.8,H*.93,.49,2.7,5,6),fl(W*.91,H*.91,.51,3.0,7,7),
+    // hero + flanking
+    fl(W*.5,H*.44,1.4,0.1,0,12),
+    fl(W*.27,H*.54,1.05,0.8,3,10),fl(W*.73,H*.52,1.0,1.1,1,10),
+    fl(W*.12,H*.62,.75,1.8,5,9),fl(W*.88,H*.6,.78,2.0,8,9),
+  ];
+
+  /* particles */
+  const particles=[];
+  function spawnParts(x,y,pal){
+    for(let i=0;i<24;i++){
+      const a=Math.random()*Math.PI*2,spd=1.2+Math.random()*4;
+      particles.push({x,y,vx:Math.cos(a)*spd,vy:Math.sin(a)*spd-2.5,
+        r:1.5+Math.random()*4,alpha:1,col:pal[Math.floor(Math.random()*pal.length)],
+        decay:.01+Math.random()*.016,type:Math.random()>.5?'c':'p'});
+    }
+  }
+  const floaters=[];
+  function spawnFloat(x,y,pal){
+    for(let i=0;i<10;i++){
+      floaters.push({x,y,vx:(Math.random()-.5)*2.5,vy:-(1.2+Math.random()*2.5),
+        rot:Math.random()*360,rotV:(Math.random()-.5)*7,
+        w:5+Math.random()*13,h:9+Math.random()*18,
+        alpha:1,decay:.005+Math.random()*.009,col:pal[Math.floor(Math.random()*pal.length)]});
+    }
+  }
+  const rays=[];
+  function spawnRays(x,y,pal){
+    for(let i=0;i<8;i++){
+      const a=(i/8)*Math.PI*2;
+      rays.push({x,y,a,len:0,maxLen:60+Math.random()*200,
+        alpha:.8,spd:6+Math.random()*14,col:pal[0]});
+    }
+  }
+
+  /* math */
+  function easeB(x){const c=1.70158;return 1+(c+1)*Math.pow(x-1,3)+c*Math.pow(x-1,2);}
+  function easeIO(x){return x<.5?4*x*x*x:1-Math.pow(-2*x+2,3)/2;}
+  function rng(v,a,b){return Math.max(0,Math.min(1,(v-a)/(b-a)));}
+
+  function drawPetal(cx,cy,angle,len,wid,col,alpha){
+    if(alpha<=0)return;
+    ctx.save();ctx.globalAlpha=alpha;
+    ctx.translate(cx,cy);ctx.rotate(angle);
+    ctx.beginPath();
+    ctx.moveTo(0,0);
+    ctx.bezierCurveTo(-wid,-len*.3,-wid*.7,-len*.7,0,-len);
+    ctx.bezierCurveTo( wid*.7,-len*.7, wid,-len*.3, 0,0);
+    const g=ctx.createLinearGradient(0,0,0,-len);
+    g.addColorStop(0,col);
+    g.addColorStop(1,col.replace(/[\d.]+\)$/,'1)'));
+    ctx.fillStyle=col;ctx.fill();
+    // shine
+    ctx.globalAlpha=alpha*.15;
+    ctx.beginPath();
+    ctx.moveTo(-wid*.15,0);
+    ctx.bezierCurveTo(-wid*.25,-len*.3,-wid*.15,-len*.6,0,-len*.8);
+    ctx.lineTo(wid*.05,-len*.6);
+    ctx.bezierCurveTo(wid*.1,-len*.3,wid*.05,-len*.1,0,0);
+    ctx.fillStyle='#fff';ctx.fill();
+    ctx.restore();
+  }
+
+  function drawFlower(f,t){
+    const{x,y,scale:s,pal,petalN}=f;
+    let cProg=0;
+
+    // stem
+    const sp=easeIO(rng(t,0,.18));
+    if(sp>0){
+      ctx.save();ctx.globalAlpha=sp;
+      ctx.strokeStyle='#4a8a50';ctx.lineWidth=Math.max(1,(3+s*2)*sp);ctx.lineCap='round';
+      const sh=(60+s*50)*sp;
+      ctx.beginPath();ctx.moveTo(x,y+sh*.3);
+      ctx.quadraticCurveTo(x+22*s,y-sh*.3,x+4*s,y-sh*.75);
+      ctx.stroke();ctx.restore();
+    }
+    // leaves
+    const lp=easeB(rng(t,.1,.3));
+    if(lp>0){
+      [[-1,1.05],[1,.95]].forEach(([la,ly])=>{
+        ctx.save();ctx.globalAlpha=Math.min(lp*2,1)*.8;
+        ctx.translate(x+la*10*s,y-(28+s*18)*ly*lp);
+        ctx.rotate(la*(Math.PI*.5));
+        const lz=30*s*lp;
+        ctx.beginPath();ctx.moveTo(0,0);
+        ctx.bezierCurveTo(-lz*.35,-lz*.45,-lz*.28,-lz*.85,0,-lz);
+        ctx.bezierCurveTo( lz*.35,-lz*.85, lz*.35,-lz*.45, 0, 0);
+        ctx.fillStyle='#5aaa55';ctx.fill();ctx.restore();
+      });
+    }
+    // outer petals
+    const op=easeB(rng(t,.2,.6));
+    if(op>0){
+      for(let i=0;i<petalN;i++){
+        const a=(i/petalN)*Math.PI*2-Math.PI*.5;
+        drawPetal(x,y,a,82*s*op,24*s*op,i%2===0?pal[1]:pal[2],Math.min(op*1.6,1));
+      }
+    }
+    // mid petals
+    const mp=easeB(rng(t,.32,.68));
+    if(mp>0){
+      const mn=Math.max(5,petalN-1);
+      for(let i=0;i<mn;i++){
+        const a=((i+.5)/mn)*Math.PI*2-Math.PI*.5;
+        drawPetal(x,y,a,58*s*mp,16*s*mp,pal[0],Math.min(mp*1.5,1));
+      }
+    }
+    // inner petals
+    const ip=easeB(rng(t,.44,.76));
+    if(ip>0){
+      for(let i=0;i<6;i++){
+        const a=(i/6)*Math.PI*2-Math.PI*.5;
+        drawPetal(x,y,a,36*s*ip,10*s*ip,pal[3]||pal[2],Math.min(ip*1.4,1));
+      }
+    }
+    // stamens
+    cProg=rng(t,.5,.78);
+    if(cProg>0){
+      const sn=10+Math.floor(petalN*1.3);
+      for(let i=0;i<sn;i++){
+        const a=(i/sn)*Math.PI*2;
+        const r=(13+cProg*9)*s;
+        ctx.save();ctx.globalAlpha=cProg;
+        ctx.beginPath();ctx.arc(x+Math.cos(a)*r,y+Math.sin(a)*r,(1.8+cProg*1.5)*s,0,Math.PI*2);
+        ctx.fillStyle='#f8d860';ctx.fill();ctx.restore();
+      }
+    }
+    // center
+    if(cProg>0){
+      const cr=15*s*cProg;
+      const g2=ctx.createRadialGradient(x-3*s,y-3*s,1,x,y,cr);
+      g2.addColorStop(0,'#ffe880');g2.addColorStop(.6,'#f7c840');g2.addColorStop(1,'#d08020');
+      ctx.save();ctx.globalAlpha=cProg;
+      ctx.beginPath();ctx.arc(x,y,cr,0,Math.PI*2);ctx.fillStyle=g2;ctx.fill();
+      const gr=ctx.createRadialGradient(x,y,0,x,y,42*s*cProg);
+      gr.addColorStop(0,`rgba(247,200,68,${.3*cProg})`);gr.addColorStop(1,'transparent');
+      ctx.beginPath();ctx.arc(x,y,42*s*cProg,0,Math.PI*2);ctx.fillStyle=gr;ctx.fill();
+      ctx.restore();
+    }
+    return cProg;
+  }
+
+  /* aurora bg */
+  let tick=0;
+  function drawAurora(prog){
+    bgX.clearRect(0,0,W,H);
+    const bg=bgX.createRadialGradient(W*.5,H*.25,0,W*.5,H*.5,H);
+    bg.addColorStop(0,`rgba(35,8,40,${.85+prog*.15})`);
+    bg.addColorStop(.5,'rgba(12,3,22,1)');
+    bg.addColorStop(1,'rgba(3,1,10,1)');
+    bgX.fillStyle=bg;bgX.fillRect(0,0,W,H);
+    // aurora bands
+    [[232,130,154],[194,85,106],[168,110,230],[90,170,230]].forEach((c,b)=>{
+      const yb=H*(.08+b*.1)+Math.sin(tick*.018+b)*H*.055;
+      const ag=bgX.createLinearGradient(0,yb-50,0,yb+50);
+      ag.addColorStop(0,'transparent');
+      ag.addColorStop(.5,`rgba(${c[0]},${c[1]},${c[2]},${.025+prog*.035})`);
+      ag.addColorStop(1,'transparent');
+      bgX.fillStyle=ag;bgX.fillRect(0,yb-50,W,100);
+    });
+    // stars
+    stars.forEach(s=>{
+      const tw=.5+.5*Math.sin(s.phase+tick*.02*s.spd);
+      bgX.save();bgX.globalAlpha=.1+tw*.8;
+      bgX.beginPath();bgX.arc(s.x,s.y,s.r*(.6+tw*.6),0,Math.PI*2);
+      bgX.fillStyle='#fff';bgX.fill();bgX.restore();
+    });
+    tick++;
+  }
+
+  /* main loop */
+  const DUR=11000;
+  let startT=null,msgShown=false;
+  const bloomed=new Set();
+
+  function loop(ts){
+    if(!startT)startT=ts;
+    const el=ts-startT;
+    const gt=Math.min(el/DUR,1);
+
+    drawAurora(gt);
+    ctx.clearRect(0,0,W,H);
+
+    // ground glow
+    if(gt>.15){
+      const gg=ctx.createLinearGradient(0,H*.7,0,H);
+      gg.addColorStop(0,'transparent');
+      gg.addColorStop(.5,`rgba(194,85,106,${.04+gt*.06})`);
+      gg.addColorStop(1,`rgba(100,30,60,${.08+gt*.1})`);
+      ctx.fillStyle=gg;ctx.fillRect(0,H*.7,W,H*.3);
+    }
+
+    flowers.forEach((f,idx)=>{
+      const lt=rng(gt, f.startT/10, (f.startT+4.5)/10);
+      if(lt<=0)return;
+      const cp=drawFlower(f,lt);
+      if(cp>.45&&!bloomed.has(idx)){
+        bloomed.add(idx);
+        spawnParts(f.x,f.y,f.pal);
+        spawnFloat(f.x,f.y,f.pal);
+        spawnRays(f.x,f.y,f.pal);
+      }
+    });
+
+    // sparkle field
+    if(gt>.35){
+      const t2=el*.001;
+      for(let i=0;i<40;i++){
+        const sx=W*(.02+i*.025+Math.sin(t2*.6+i*.9)*.03);
+        const sy=H*(.05+i*.022+Math.cos(t2*.45+i*.7)*.035);
+        const sp=.5+.5*Math.sin(t2*3.2+i*1.3);
+        const alpha=(gt-.35)/.65*sp*.75;
+        if(alpha<=0)continue;
+        ctx.save();ctx.globalAlpha=alpha;
+        ctx.strokeStyle='rgba(253,232,244,.9)';ctx.lineWidth=.7;
+        const sr=2.5+sp*5.5;
+        for(let j=0;j<4;j++){
+          const a=(j/4)*Math.PI*2;
+          ctx.beginPath();
+          ctx.moveTo(sx+Math.cos(a)*sr*.25,sy+Math.sin(a)*sr*.25);
+          ctx.lineTo(sx+Math.cos(a)*sr,sy+Math.sin(a)*sr);
+          ctx.stroke();
+        }
+        ctx.beginPath();ctx.arc(sx,sy,1.2+sp*.8,0,Math.PI*2);
+        ctx.fillStyle='#fff';ctx.fill();
+        ctx.restore();
+      }
+    }
+
+    // particles
+    for(let i=particles.length-1;i>=0;i--){
+      const p=particles[i];
+      p.x+=p.vx;p.y+=p.vy;p.vy+=.07;p.alpha-=p.decay;
+      if(p.alpha<=0){particles.splice(i,1);continue;}
+      ctx.save();ctx.globalAlpha=p.alpha;
+      if(p.type==='c'){
+        ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+        ctx.fillStyle=p.col;ctx.fill();
+      }else{
+        ctx.translate(p.x,p.y);ctx.rotate(p.vy*.25);
+        ctx.beginPath();
+        ctx.moveTo(0,0);
+        ctx.bezierCurveTo(-p.r,-p.r*.5,-p.r*.6,-p.r*1.3,0,-p.r*1.6);
+        ctx.bezierCurveTo(p.r*.6,-p.r*1.3,p.r,-p.r*.5,0,0);
+        ctx.fillStyle=p.col;ctx.fill();
+      }
+      ctx.restore();
+    }
+
+    // floaters
+    for(let i=floaters.length-1;i>=0;i--){
+      const f=floaters[i];
+      f.x+=f.vx;f.y+=f.vy;f.vy+=.018;f.vx*=.99;
+      f.rot+=f.rotV;f.alpha-=f.decay;
+      if(f.alpha<=0){floaters.splice(i,1);continue;}
+      ctx.save();ctx.globalAlpha=f.alpha;
+      ctx.translate(f.x,f.y);ctx.rotate(f.rot*Math.PI/180);
+      ctx.beginPath();
+      ctx.moveTo(0,0);
+      ctx.bezierCurveTo(-f.w/2,-f.h*.3,-f.w*.4,-f.h*.75,0,-f.h);
+      ctx.bezierCurveTo(f.w*.4,-f.h*.75,f.w/2,-f.h*.3,0,0);
+      ctx.fillStyle=f.col;ctx.fill();
+      ctx.restore();
+    }
+
+    // rays
+    for(let i=rays.length-1;i>=0;i--){
+      const r=rays[i];
+      r.len+=r.spd;r.alpha-=.007;
+      if(r.alpha<=0){rays.splice(i,1);continue;}
+      ctx.save();ctx.globalAlpha=r.alpha*.45;
+      const rg=ctx.createLinearGradient(
+        r.x,r.y,
+        r.x+Math.cos(r.a)*r.len,r.y+Math.sin(r.a)*r.len
+      );
+      rg.addColorStop(0,'rgba(255,220,240,.7)');rg.addColorStop(1,'transparent');
+      ctx.strokeStyle=rg;ctx.lineWidth=1.5;
+      ctx.beginPath();ctx.moveTo(r.x,r.y);
+      ctx.lineTo(r.x+Math.cos(r.a)*r.len,r.y+Math.sin(r.a)*r.len);
+      ctx.stroke();ctx.restore();
+    }
+
+    if(gt>.65&&!msgShown){
+      msgShown=true;
+      document.getElementById('overlayMsg').classList.add('show');
+      document.getElementById('answerRow').classList.add('show');
+    }
+
+    if(gt<1)requestAnimationFrame(loop);
+  }
+  requestAnimationFrame(loop);
+}
+
+/* answers */
+function handleYes(){
+  confettiBurst();
+  const em=['💖','🌸','✨','🌷','💕','🌺','⭐','🦋','💞','❤️','🥵'];
+  for(let i=0;i<18;i++){
+    setTimeout(()=>{
+      const h=document.createElement('div');h.className='hp';
+      h.textContent=em[Math.floor(Math.random()*em.length)];
+      h.style.left=(window.innerWidth*.15+Math.random()*window.innerWidth*.7)+'px';
+      h.style.top=(window.innerHeight*.55)+'px';
+      document.body.appendChild(h);setTimeout(()=>h.remove(),3000);
+    },i*80);
+  }
+  document.getElementById('questionText').textContent='🌹 Я знал что ты так скажешь! 💘';
+  document.getElementById('answerRow').style.display='none';
+  setTimeout(()=>{
+    document.getElementById('modalBackdrop').classList.add('show');
+  }, 1500);
+}
+function closeModal(){
+  document.getElementById('modalBackdrop').classList.remove('show');
+}
+function handleNo(){
+  const btn=document.querySelector('.ans-no');
+  btn.style.position='fixed';
+  btn.style.left=Math.random()*(window.innerWidth-120)+'px';
+  btn.style.top=Math.random()*(window.innerHeight-60)+'px';
+}
+function confettiBurst(){
+  const colors=['#f7c5d0','#e8829a','#c2556a','#fde080','#a8d8a8','#d4a8c0','#c8e0f8','#e0c8f8'];
+  const cx=window.innerWidth/2,cy=window.innerHeight*.6;
+  for(let i=0;i<90;i++){
+    const p=document.createElement('div');p.className='cp';
+    const a=Math.random()*Math.PI*2,d=80+Math.random()*280;
+    p.style.cssText=`left:${cx}px;top:${cy}px;
+      width:${5+Math.random()*9}px;height:${5+Math.random()*9}px;
+      background:${colors[i%colors.length]};
+      border-radius:${Math.random()>.5?'50%':'3px'};
+      animation-duration:${1.8+Math.random()*1.5}s;
+      --tx:translate(${Math.cos(a)*d}px,${Math.sin(a)*d-200}px);`;
+    document.body.appendChild(p);setTimeout(()=>p.remove(),3400);
+  }
+}
+
+if(window.location.hash==='#open'){
+  document.getElementById('page-gate').classList.add('hidden');
+  document.getElementById('page-flower').classList.remove('hidden');
+  setTimeout(launchEpic,100);
+}
+</script>
+<!-- BEAUTIFUL MODAL -->
+<div class="modal-backdrop" id="modalBackdrop">
+  <div class="modal-box">
+    <div class="modal-icon">💌</div>
+    <p class="modal-title">На будущее </p>
+    <p class="modal-question" id="modalQuestion">Когда встретимся подарю настоящие! 😘</p>
+    <button class="modal-close" onclick="closeModal()">с любовью 💖</button>
+  </div>
+</div>
+</body>
+</html>
